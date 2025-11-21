@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Component Inventory — COMPLETE (No Tokenization)</title>
+<style>
+html,body{margin:0;background:#fafafa;color:#1f2937;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";}
+.wrapper{max-width:1240px;margin:40px auto;padding:0 20px 80px;}
+h1{font-size:28px;margin:0 0 8px;}
+.lede{color:#374151;margin:0 0 24px;}
+.controls{display:flex;gap:12px;align-items:center;margin:16px 0 24px;flex-wrap:wrap;}
+.select,.input{border:1px solid #d1d5db;padding:10px 12px;border-radius:8px;background:#fff;}
+.input{min-width:260px;}
+.table{width:100%;border-collapse:separate;border-spacing:0 12px;}
+.table thead th{text-align:left;font-size:14px;color:#4b5563;font-weight:600;padding:8px 12px;}
+.row{background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.15);}
+.cell{vertical-align:top;padding:18px 16px;font-size:15px;line-height:1.45;border-right:1px dashed #e5e7eb;}
+.cell:last-child{border-right:none;}
+.badge{display:inline-block;background:#e8f3ea;color:#2f7d32;border:1px solid #cfe3d0;border-radius:999px;padding:2px 8px;font-size:12px;margin-right:6px;}
+.code{font-family:ui-monospace,Menlo,Consolas,monospace;background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:2px 6px;}
+.section-note{font-size:13px;color:#374151;}
+.demo{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;padding:10px 18px;border-radius:8px;border:1px solid transparent;background:#eee;color:#111;font-weight:700;cursor:pointer;transition:all .15s ease;}
+.btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(47,125,50,.3);}
+.btn[disabled]{opacity:.55;cursor:not-allowed;}
+.btn-primary{background:#2f7d32;color:#fff;}
+.btn-primary:hover{background:#256428;}
+.btn-outline{background:#fff;border-color:#2f7d32;color:#2f7d32;}
+.btn-outline:hover{background:#e8f3ea;}
+.btn-dark{background:#2c2c2c;color:#fff;}
+.btn-dark:hover{background:#1f1f1f;}
+.btn-pill{border-radius:28px;padding:12px 22px;}
+.btn-small{padding:8px 12px;border-radius:6px;font-size:13px;}
+.btn-icon{width:40px;height:40px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #e5e7eb;background:#fff;}
+.btn-icon:hover{background:#f3f4f6;}
+.btn-link{border:none;background:transparent;color:#2f7d32;font-weight:700;padding:0;}
+.input--search{max-width:520px;padding:12px 14px 12px 44px;background:#fff url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%236b7280%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><circle cx=%2211%22 cy=%2211%22 r=%228%22/><line x1=%2221%22 y1=%2221%22 x2=%2216.65%22 y2=%2216.65%22/></svg>') no-repeat 12px center;}
+.checkbox{appearance:none;width:18px;height:18px;border:1px solid rgba(75,85,99,.4);border-radius:4px;display:inline-block;position:relative;}
+.checkbox:checked{background:#2f7d32;border-color:#2f7d32;}
+.checkbox:checked::after{content:'✓';position:absolute;color:#fff;left:3px;top:-1px;font-size:14px;}
+.chip{display:inline-flex;align-items:center;border:1px solid #d1d5db;padding:8px 12px;border-radius:999px;background:#fff;cursor:pointer;font-weight:600;}
+.chip.is-active{border-color:#2f7d32;background:#e8f3ea;color:#2f7d32;}
+.stepper{display:inline-flex;border:1px solid #d1d5db;border-radius:8px;overflow:hidden;align-items:center;}
+.stepper button{all:unset;cursor:pointer;padding:10px 14px;display:inline-flex;align-items:center;justify-content:center;}
+.stepper input{width:46px;text-align:center;border:none;padding:10px 0;font-weight:700;background:#fff;}
+.stepper button:hover{background:#f3f4f6;}
+.surface{background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 10px 24px rgba(0,0,0,.18),0 2px 8px rgba(0,0,0,.1);padding:16px;}
+.banner{border-radius:10px;padding:14px 16px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.banner--shipping{background:#f9c74f;color:#111111;border:1px solid rgba(0,0,0,.08);}
+.banner--coupon{background:#e11d48;color:#ffffff;}
+.banner--info{background:#e6f6fe;color:#087ab7;border:1px solid #77c7ee;}
+.banner--success{background:#e7f7ec;color:#107a3a;border:1px solid #8ed3a7;}
+.progress{height:10px;border-radius:999px;background:#f3f4f6;position:relative;overflow:hidden;border:1px solid #e5e7eb;}
+.progress>span{position:absolute;left:0;top:0;bottom:0;background:#2f7d32;width:68%;}
+.dot{width:8px;height:8px;border-radius:999px;background:rgba(0,0,0,.2);}
+.dot.is-active{background:#2f7d32;}
+.tooltip{position:relative;display:inline-block;}
+.tooltip:hover::after{content:attr(data-tip);position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 8px);background:#111;color:#fff;padding:6px 8px;border-radius:6px;white-space:nowrap;font-size:12px;}
+.header{display:flex;align-items:center;gap:14px;padding:10px 16px;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.15);}
+.nav{display:flex;gap:16px;margin-left:auto;align-items:center;}
+.badge-count{min-width:20px;height:20px;border-radius:999px;background:#2f7d32;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;padding:0 6px;}
+.footer{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.15);padding:16px;}
+.link-col h4{margin:.2rem 0 .6rem;font-size:14px;}
+.link-col a{display:block;color:#374151;text-decoration:none;margin:.25rem 0;}
+.link-col a:hover{text-decoration:underline;}
+.container{max-width:1100px;margin:0 auto;padding:0 16px;border:1px dashed #e5e7eb;border-radius:12px;}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.media{position:relative;width:220px;height:140px;background:#e5e5e5;border-radius:12px;overflow:hidden;}
+.media img{width:100%;height:100%;object-fit:cover;}
+.breadcrumbs{display:flex;gap:8px;align-items:center;font-size:14px;}
+.breadcrumbs a{text-decoration:none;color:#2f7d32;}
+.rail{border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;}
+.rail .rail-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-weight:800;background:#fff;}
+.rail .rail-body{padding:12px 14px;background:#f3f4f6;}
+.flaglink{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#1f2937;border:1px solid #e5e7eb;padding:8px 10px;border-radius:8px;background:#fff;}
+.flag{width:18px;height:12px;background:linear-gradient(180deg,#b22234 50%,#fff 50%);border:1px solid #bbb;}
+.avatar{width:36px;height:36px;border-radius:999px;background:linear-gradient(135deg,#ddd,#bbb);display:inline-block;border:1px solid #e5e7eb;}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Component Inventory — COMPLETE</h1>
+    <p class="lede">All components merged into one page with filter + search. Non-tokenized static styles ensure consistent prototypes.</p>
+    <div class="controls">
+      <label>Filter:</label>
+      <select id="filter" class="select">
+        <option value="all">All</option>
+        <option value="Button">Button</option>
+        <option value="Input">Input</option>
+        <option value="Container">Container</option>
+        <option value="Banner">Banner</option>
+        <option value="Disclosure">Disclosure</option>
+        <option value="Navigation">Navigation</option>
+        <option value="Layout">Layout</option>
+        <option value="Data Display">Data Display</option>
+        <option value="Feedback">Feedback</option>
+        <option value="Overlays">Overlays</option>
+        <option value="Utilities">Utilities</option>
+        <option value="Content">Content</option>
+      </select>
+      <input id="search" class="input" placeholder="Search by name or type…" />
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width:280px">Component</th>
+          <th style="width:160px">Category</th>
+          <th>Usage guidelines</th>
+          <th style="width:260px">Common parents</th>
+          <th style="width:440px">Prototype</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="section-note"><span class="badge">Tip</span> Use the filter and search to find components quickly. I can export this to CSV/JSON on request.</p>
+  </div>
+<script>
+const $=(s,ctx=document)=>ctx.querySelector(s);
+const $$=(s,ctx=document)=>Array.from(ctx.querySelectorAll(s,ctx));
+const items=[
+  ["Modal Primary CTA (Solid Green)","Button","Primary CTA",["Use once per modal as the main action.","Pairs with a passive secondary (link or outline).","Keep label short and action‑oriented."],["Modal / Dialog","Blocking alerts"],()=>{const w=document.createElement('div');w.className='surface';w.style.width='420px';w.innerHTML=`<div style="font-weight:800;font-size:20px;">Pending Order</div><div style="color:#374151;margin:4px 0 12px;">You have an order with a pending payment.</div><div class="demo"><button class="btn btn-primary">PAY</button><button class="btn btn-link">Learn more</button></div>`;return w;}],
+  ["Modal Close (Icon)","Button","Icon Button",["Top-right of modal surfaces; 40×40 hit target.","Accessible label (aria-label='Close').","Avoid as the only dismissal path."],["Modal / Dialog"],()=>{const b=document.createElement('button');b.className='btn-icon';b.setAttribute('aria-label','Close');b.innerHTML='&#10005;';return b;}],
+  ["Hero CTA (Pill, Dark)","Button","Primary CTA",["One primary CTA per hero slide.","Avoid competing buttons within hero.","Keep label under ~24 chars."],["Homepage hero / marketing carousel"],()=>{const b=document.createElement('button');b.className='btn btn-dark btn-pill';b.textContent='SHOP LIMITED-TIME COUPONS';return b;}],
+  ["Carousel Arrow","Button","Icon Button",["Circular chevron; low emphasis vs hero CTA.","Minimum hit target 40×40.","Position on media edge."],["Hero carousel","Product carousel"],()=>{const d=document.createElement('div');d.className='demo';const mk=dir=>{const b=document.createElement('button');b.className='btn-icon';b.innerHTML=dir==='prev'?'&#8249;':'&#8250;';return b;};d.append(mk('prev'),mk('next'));return d;}],
+  ["Card Primary — SELECT","Button","Primary CTA",["Appears on product tiles.","One per card; under price.","Starts configuration flow or quick add."],["Product tiles","Product carousel"],()=>{const b=document.createElement('button');b.className='btn btn-primary btn-small';b.textContent='SELECT';return b;}],
+  ["Add-to-List (Icon, Small)","Button","Icon Button",["Tertiary affordance to the right of SELECT.","Use tooltip for clarity.","Never more prominent than SELECT."],["Product tiles"],()=>{const b=document.createElement('button');b.className='btn-icon';b.innerHTML='&#x2795;';b.title='Add to list';return b;}],
+  ["Outline — View All Monthly Specials","Button","Outline CTA",["Secondary nav to collection page.","Avoid pairing with another outline in same block."],["Promo sections"],()=>{const b=document.createElement('button');b.className='btn btn-outline btn-pill';b.textContent='VIEW ALL MONTHLY SPECIALS';return b;}],
+  ["Filter Chip (Segmented)","Button","Toggle",["Mutually exclusive small set.","Default to 'All'.","Selected shows green border/fill."],["Right-hand choices drawer"],()=>{const wrap=document.createElement('div');wrap.className='demo';['All','Fluoride-Free','Fluoride'].forEach((t,i)=>{const c=document.createElement('button');c.className='chip'+(i===0?' is-active':'');c.textContent=t;c.onclick=()=>{$$('.chip',wrap).forEach(el=>el.classList.remove('is-active'));c.classList.add('is-active');};wrap.appendChild(c);});return wrap;}],
+  ["View Cart (Outline)","Button","Secondary CTA",["Secondary action post add-to-cart.","Outline keeps hierarchy below primaries."],["Cart flyout/confirmation"],()=>{const b=document.createElement('button');b.className='btn btn-outline';b.textContent='VIEW CART';return b;}],
+  ["Keep Shopping (Solid)","Button","Continuation CTA",["Optimistic continuation after add.","Placed secondary to 'View Cart' per flow."],["Cart flyout/confirmation"],()=>{const b=document.createElement('button');b.className='btn btn-primary';b.textContent='KEEP SHOPPING';return b;}],
+  ["Proceed to Checkout","Button","Primary CTA (page-level)",["One per Cart page.","Anchored in order summary.","Avoid nearby solid greens."],["Shopping Cart — Order Summary"],()=>{const b=document.createElement('button');b.className='btn btn-primary btn-pill';b.textContent='PROCEED TO CHECKOUT';return b;}],
+  ["Watch Video","Button","Emphasis CTA (dark)",["Inside promo modules.","One per block; high contrast."],["Right rail promo"],()=>{const b=document.createElement('button');b.className='btn btn-dark';b.textContent='WATCH VIDEO';return b;}],
+  ["Feedback — Share Your Feedback","Button","Outline CTA (footer bar)",["Persistent feedback bar CTA.","Lower emphasis than page primaries."],["Global footer bar"],()=>{const b=document.createElement('button');b.className='btn btn-outline';b.textContent='SHARE YOUR FEEDBACK';return b;}],
+  ["Small Text CTA — Edit / Remove / Details","Button","Link-Button",["Inline low-emphasis actions.","Avoid pairing with solid/outline CTAs in dense groups."],["Cart line items","Promo banners"],()=>{const wrap=document.createElement('div');wrap.className='demo';['Edit','Remove','Details'].forEach(t=>{const b=document.createElement('button');b.className='btn btn-link';b.textContent=t;wrap.appendChild(b);});return wrap;}],
+
+  ["Quantity Stepper","Input","Compound Control",["Clamp at 1+; disable decrement at min.","Place near price and cart line items.","Keyboard +/- support."],["Choices drawer","Cart"],()=>{const wrap=document.createElement('div');wrap.className='stepper';wrap.innerHTML=`<button aria-label="Decrease">−</button><input type="number" value="1" min="1"/><button aria-label="Increase">+</button>`;const input=$('input',wrap);const dec=wrap.children[0],inc=wrap.children[2];const clamp=()=>{input.value=Math.max(1,parseInt(input.value||'1',10));};dec.onclick=()=>{input.value=Math.max(1,parseInt(input.value,10)-1);};inc.onclick=()=>{input.value=parseInt(input.value,10)+1;};input.onchange=clamp;return wrap;}],
+  ["Global Search Field","Input","Text Input (search)",["Prominent in header; suggestions.","Left icon inside padding.","Desktop max width ~520px."],["Global header"],()=>{const i=document.createElement('input');i.className='input input--search';i.placeholder='Search products…';return i;}],
+  ["Language Select","Input","Native Select",["Footer-only control for locale.","Paired with text label."],["Footer"],()=>{const s=document.createElement('select');s.className='select';['United States - English','Canada - English','Canada - Français'].forEach(t=>{const o=document.createElement('option');o.text=t;s.add(o);});return s;}],
+  ["Checkbox — Loyalty Shopping Dollars","Input","Checkbox",["Inline at end of cart line item.","Disabled when ineligible; tooltip clarifies."],["Cart line item"],()=>{const w=document.createElement('label');w.className='demo';w.innerHTML='<input type="checkbox" class="checkbox" checked /> <span>Buy with Loyalty Shopping Dollars</span>';return w;}],
+
+  ["Accordion Disclosure","Disclosure","Disclosure Button",["Toggle visibility of option groups.","Sentence-case labels; caret rotates."],["Choices drawer","Right rail"],()=>{const acc=document.createElement('div');acc.className='surface';acc.innerHTML=`<div style="font-weight:800;">Choose: Flavor ▸</div><div style="margin-top:8px;color:#374151;">Body content (flavor options)…</div>`;return acc;}],
+
+  ["Shipping Eligibility Banner","Banner","Informational (yellow)",["Top of cart/drawer; indicates points left to free shipping.","Single 'DETAILS' action on right."],["Cart page","Cart drawer"],()=>{const b=document.createElement('div');b.className='banner banner--shipping';b.innerHTML=`<span>GET SHIPPING ON US! — 13 Product Points away…</span><span class="demo"><button class="btn btn-outline btn-small">DETAILS</button></span>`;return b;}],
+  ["Coupon Alert Banner","Banner","Emphasis (red)",["Right rail promo; one action (Watch Video).","Use sparingly."],["Cart right rail"],()=>{const b=document.createElement('div');b.className='banner banner--coupon';b.innerHTML=`<span><strong>You have a new coupon</strong></span><span class="demo"><button class="btn btn-dark btn-small">WATCH VIDEO</button></span>`;return b;}],
+  ["CTA Banner (Generic Shell)","Banner","Informational/Success/Warning",["Generic banner style to support multiple severities and placements.","Use one primary action at most."],["Promos","Global notices"],()=>{const wrap=document.createElement('div');wrap.className='demo';wrap.innerHTML=`<div class="banner banner--info"><span>Heads up: A new shipping policy applies.</span><span class="demo"><button class="btn btn-link">Learn more</button></span></div><div class="banner banner--success"><span>Coupon applied successfully.</span><span class="demo"><button class="btn btn-link">Undo</button></span></div>`;return wrap;}],
+
+  ["Modal Dialog","Container","Overlay Container",["Centered with scrim; blocks page until dismissed.","For critical alerts/decisions."],["Global"],()=>{const w=document.createElement('div');w.className='surface';w.style.width='420px';w.innerHTML=`<div style="font-weight:800;font-size:20px;">Pending Order</div><div style="color:#374151;margin:6px 0 12px;">Balance due before placing additional orders.</div><div class="demo"><button class="btn btn-primary">PAY</button><button class="btn btn-link">Learn more</button></div>`;return w;}],
+  ["Right-side Drawer","Container","Overlay Container",["Slides from right; product customization and cart confirmation.","Footer holds qty + Add to Cart."],["PDP quick add","Cart confirmation"],()=>{const w=document.createElement('div');w.className='surface';w.style.width='380px';w.innerHTML=`<div style="font-weight:800;">Your Choices</div><div style="color:#374151;">Price $12.77 · Points 5</div><div class="demo" style="margin:8px 0;"><button class="chip is-active">All</button><button class="chip">Fluoride-Free</button><button class="chip">Fluoride</button></div><div class="demo" style="justify-content:space-between;"><div class="stepper"><button>−</button><input type="number" value="1" min="1"/><button>+</button></div><button class="btn btn-primary">ADD TO CART</button></div>`;return w;}],
+  ["Product Card (Tile)","Container","Card",["Image, savings label, price, and CTA row.","Subtle border and shadow; generous padding."],["Homepage sections","Carousels"],()=>{const c=document.createElement('div');c.className='surface';c.style.width='260px';c.innerHTML=`<span class="badge">SAVINGS PACK</span><div style="font-weight:800;margin-top:8px;">$12.77 <span style="font-weight:400;color:#4b5563;">· 5 Points</span></div><div class="demo" style="margin-top:8px;"><button class="btn btn-primary btn-small">SELECT</button><button class="btn-icon" title="Add to list">＋</button></div>`;return c;}],
+  ["Order Summary Panel","Container","Right Rail Card",["Right column of cart; totals + checkout CTA.","Only one primary CTA on panel."],["Shopping Cart"],()=>{const s=document.createElement('div');s.className='surface';s.style.width='360px';s.innerHTML=`<div style="font-weight:800;">Order Summary</div><div style="color:#374151;margin-bottom:12px;">Subtotal $78.88 · Points 31</div><button class="btn btn-primary btn-pill" style="width:100%;">PROCEED TO CHECKOUT</button>`;return s;}],
+  ["Hero Slide Container","Container","Carousel Slide",["Large background with headline + single primary CTA.","Arrows & dots for navigation."],["Homepage hero"],()=>{const h=document.createElement('div');h.className='surface';h.innerHTML=`<div style="font-weight:900;font-size:20px;">Looking for the Perfect <em>Stocking Stuffers?</em></div><div class="demo" style="margin-top:10px;"><button class="btn btn-dark btn-pill">SHOP LIMITED-TIME COUPONS</button></div><div class="demo" style="margin-top:8px;"><span class="dot is-active"></span><span class="dot"></span><span class="dot"></span></div>`;return h;}],
+  ["Footer Feedback Bar","Container","Sticky Bar",["Spans bottom; single outline button.","Low emphasis vs page primaries."],["Global"],()=>{const d=document.createElement('div');d.className='banner';d.style.background='#2a5d2c';d.style.color='#fff';d.innerHTML=`<span>What do you think about the website?</span><span class="demo"><button class="btn btn-outline btn-small">SHARE YOUR FEEDBACK</button></span>`;return d;}],
+  ["Cart Confirmation Drawer","Container","Right-side Confirmation",["Summarizes added item; 'View Cart' + 'Keep Shopping'.","May include shipping banner and cross-sell."],["Add-to-cart flow"],()=>{const w=document.createElement('div');w.className='surface';w.style.width='380px';w.innerHTML=`<div style="font-weight:800;">Added to Cart</div><div style="color:#374151;">Tooth Polish 3‑Pack · Qty 1</div><div class="demo" style="margin-top:8px;"><button class="btn btn-outline">VIEW CART</button><button class="btn btn-primary">KEEP SHOPPING</button></div><div class="banner banner--shipping" style="margin-top:12px;"><span>GET SHIPPING ON US!</span><span class="demo"><button class="btn btn-outline btn-small">DETAILS</button></span></div>`;return w;}],
+
+  ["App Header (Site Header)","Navigation","Header",["Masthead with logo, search, account/menu/cart.","Responsive collapse keeps search accessible."],["Global"],()=>{const h=document.createElement('div');h.className='header';h.innerHTML=`<div class="logo" style="font-weight:900;">Logo</div><input class="input input--search" placeholder="Search products…"/><nav class="nav"><a class="btn-link">ORDERS ▾</a><a class="btn-link">LISTS ▾</a><span class="tooltip" data-tip="Cart"><button class="btn-icon">🛒</button><span class="badge-count">2</span></span><span class="avatar" title="Account"></span></nav>`;return h;}],
+  ["Global Navigation / Mega Menu","Navigation","Menu",["Multi-level with overlay; back/forward; content panels."],["Header"],()=>{const m=document.createElement('div');m.className='surface';m.style.width='360px';m.innerHTML=`<strong>Shop Departments</strong><div class="demo" style="margin-top:8px;"><a class="btn-link">Supplements</a><a class="btn-link">Cleaning</a><a class="btn-link">Personal Care</a><a class="btn-link">Food & Drinks</a></div>`;return m;}],
+  ["Breadcrumbs","Navigation","Breadcrumb",["Show hierarchical location; collapse on mobile.","Use chevrons or › separators."],["Interior pages"],()=>{const b=document.createElement('div');b.className='breadcrumbs';b.innerHTML=`<a href="#">Home</a> › <a href="#">Category</a> › <span>Item</span>`;return b;}],
+  ["Navigation Eyebrow Bar","Navigation","Utility Nav",["Thin top utility links; low emphasis."],["Global"],()=>{const e=document.createElement('div');e.innerHTML=`<span class="badge">Product Store</span> <span class="badge">Our Story</span> <span class="badge">Rewards</span>`;return e;}],
+  ["Dropdown Trigger (Header)","Navigation","Trigger",["Text + caret opening small menus; keyboard accessible."],["Header"],()=>{const d=document.createElement('div');d.innerHTML=`<button class="btn-link">ORDERS ▾</button> <button class="btn-link">LISTS ▾</button>`;return d;}],
+  ["Flyout Panel","Navigation","Flyout",["Compact panel for quick lists; anchored to trigger."],["Header"],()=>{const f=document.createElement('div');f.className='surface';f.style.width='280px';f.innerHTML=`<div><a class="btn-link">View Orders</a></div><div><a class="btn-link">Track Shipment</a></div><div class="dot" style="width:100%;height:1px;background:#e5e7eb;"></div><div><a class="btn-link">Billing</a></div>`;return f;}],
+  ["Skip Links","Navigation","Accessibility Utility",["Visually hidden links that appear on focus to jump to main content or navigation.","First focusable element on the page."],["Global"],()=>{const d=document.createElement('div');d.className='demo';d.innerHTML=`<a class="btn-link" href="#main">Skip to main content</a> · <a class="btn-link" href="#nav">Skip to navigation</a>`;return d;}],
+  ["Carousel Controls Container","Navigation","Control Container",["Positions arrows over media and manages alignment and safe areas.","Keeps arrows at least 40×40 with adequate contrast."],["Hero carousel","Product carousel"],()=>{const d=document.createElement('div');d.className='surface';d.innerHTML=`<div class="demo"><button class="btn-icon">&#8249;</button><div style="flex:1"></div><button class="btn-icon">&#8250;</button></div>`;return d;}],
+
+  ["Site Footer","Layout","Footer",["Multi-column link lists, contact, socials, locale block."],["Global"],()=>{const f=document.createElement('div');f.className='footer';f.innerHTML=`<div class="link-col"><h4>Product Store</h4><a href="#">Our Story</a><a href="#">Ingredients</a><a href="#">Privacy</a></div><div class="link-col"><h4>Support</h4><a href="#">Contact Us</a><a href="#">FAQ</a></div><div class="link-col"><h4>Programs</h4><a href="#">Rewards</a><a href="#">Business Center</a></div><div class="link-col"><h4>Follow</h4><div class="demo"><button class="btn-icon">f</button><button class="btn-icon">IG</button></div></div>`;return f;}],
+  ["Responsive Container / Grid","Layout","Container/Grid",["Sets max-width and column rhythm for sections."],["Global"],()=>{const c=document.createElement('div');c.className='container';c.innerHTML=`<div class="grid"><div class="surface">A</div><div class="surface">B</div><div class="surface">C</div><div class="surface">D</div><div class="surface">E</div></div>`;return c;}],
+  ["Category Section / Grid","Content","Section",["Row of category cards with section title.","Often below specials."],["Homepage"],()=>{const s=document.createElement('div');s.innerHTML=`<div style="font-weight:900;margin-bottom:8px;">FEATURED CATEGORIES</div><div class="demo">${['Supplements','Cleaning','Laundry','Personal Care','Dental'].map(x=>`<div class="surface" style="padding:10px;"><div class="media" style="width:120px;height:80px;"></div><div style="font-weight:600;margin-top:6px;">${x}</div></div>`).join('')}</div>`;return s;}],
+  ["Category Card","Content","Card",["Circular image with label; equal heights."],["Category Section"],()=>{const c=document.createElement('div');c.className='surface';c.style.width='160px';c.innerHTML=`<div class="media" style="border-radius:999px;width:96px;height:96px;"></div><div style="font-weight:600;margin-top:8px;">Beauty</div>`;return c;}],
+  ["Hero Label / Over-media Eyebrow","Content","Over-media Label",["Subtle label over hero imagery."],["Hero Slide"],()=>{const h=document.createElement('div');h.className='surface';h.innerHTML=`<span class="badge">Limited Time</span>`;return h;}],
+  ["Image (Fixed Aspect Media Wrapper)","Content","Media",["Ensures consistent thumbnail sizing."],["Cards","Promos"],()=>{const m=document.createElement('div');m.className='media';m.innerHTML=`<img src="https://picsum.photos/420/260" alt=""/>`;return m;}],
+  ["Icon Badge / Counter","Data Display","Badge",["Numeric counter for icons; supports 9+ overflow."],["Header"],()=>{const d=document.createElement('div');d.innerHTML=`<button class="btn-icon">🛒</button> <span class="badge-count">12</span>`;return d;}],
+  ["Carousel Pagination Dots","Data Display","Pagination",["Dots indicate current slide; one active."],["Hero carousel"],()=>{const w=document.createElement('div');w.className='demo';w.innerHTML=`<span class="dot is-active"></span><span class="dot"></span><span class="dot"></span>`;return w;}],
+  ["Price Display","Data Display","Price Meta",["Supports strike-through list price, member price, points."],["Product card","Cart line"],()=>{const p=document.createElement('div');p.className='surface';p.innerHTML=`<div class="price"><span class="strike">$16.00</span> $12.77 <span style="color:#4b5563;">· 5 Points</span></div>`;return p;}],
+  ["Pills & Status Labels","Data Display","Label",["Badges like 'SAVINGS PACK', 'NEW'."],["Cards","Promos"],()=>{const w=document.createElement('div');w.className='demo';w.innerHTML=`<span class="badge">SAVINGS PACK</span> <span class="badge" style="background:#fff;border:1px solid #d1d5db;color:#1f2937;">NEW</span>`;return w;}],
+  ["Progress Bar (Points Tracker)","Data Display","Progress",["Linear tracker with label; current/goal."],["Rewards","Cart summary"],()=>{const d=document.createElement('div');d.innerHTML=`<div class="progress"><span></span></div>`;return d;}],
+
+  ["Inline Text Links (CTA Link)","Feedback","Link-Button",["Low-emphasis inline actions."],["Promos","Line items"],()=>{const d=document.createElement('div');d.innerHTML=`<button class="btn-link">Details</button> · <button class="btn-link">Learn more</button>`;return d;}],
+  ["Toast / Inline Alert","Feedback","Toast",["Lightweight, dismissible informational message."],["Global"],()=>{const t=document.createElement('div');t.className='surface';t.innerHTML=`<div class="toast"><span>Saved to list</span> <button class="btn-link">Undo</button></div>`;return t;}],
+  ["Tooltip","Feedback","Tooltip",["Hover/focus hint for icon-only buttons."],["Icon buttons","Form controls"],()=>{const tip=document.createElement('div');tip.className='tooltip';tip.dataset.tip='Add to list';tip.innerHTML=`<button class="btn-icon">＋</button>`;return tip;}],
+  ["Social Icon Button","Feedback","Icon Button",["Round brand icons for social links in footer.","Open in new tab; provide label for screen readers."],["Footer"],()=>{const d=document.createElement('div');d.className='demo';d.innerHTML=`<button class="btn-icon" aria-label="Facebook">f</button><button class="btn-icon" aria-label="Instagram">IG</button><button class="btn-icon" aria-label="YouTube">▶</button>`;return d;}],
+
+  ["Overlay / Scrim","Overlays","Scrim",["Dimmed backdrop for modals/drawers/menus."],["Global"],()=>{const s=document.createElement('div');s.className='surface';s.innerHTML=`<div class="banner" style="background:rgba(0,0,0,.45);color:#fff;">Overlay</div>`;return s;}],
+
+  ["Inline Divider / Separator","Utilities","Rule",["Thin rules in menus and panels."],["Menus","Panels","Rails"],()=>{const d=document.createElement('div');d.className='surface';d.innerHTML=`<div class="dot" style="width:100%;height:1px;background:#e5e7eb;"></div>`;return d;}],
+  ["Icon-with-Text List Item","Utilities","List Item",["Leading icon with link text."],["Footer","Flyouts"],()=>{const r=document.createElement('div');r.className='surface';r.innerHTML=`<span class="btn-icon">ⓘ</span> <a class="btn-link">Contact Us</a>`;return r;}],
+  ["Pagination (Product Strip)","Utilities","Pagination",["Arrows + dots for strip navigation."],["Product strip"],()=>{const w=document.createElement('div');w.className='demo';w.innerHTML=`<button class="btn-icon">&#8249;</button><span class="dot is-active"></span><span class="dot"></span><span class="dot"></span><button class="btn-icon">&#8250;</button>`;return w;}],
+  ["Locale / Language Switcher Block","Utilities","Locale Block",["Label, flag, and select; footer placement."],["Footer"],()=>{const b=document.createElement('div');b.className='demo';b.innerHTML=`<a class="flaglink" href="#"><span class="flag"></span> United States · English</a><select class="select"><option>United States - English</option><option>Canada - English</option></select>`;return b;}],
+  ["Flag/Locale Link","Utilities","Link",["Compact flag + text link to region settings."],["Footer"],()=>{const a=document.createElement('a');a.className='flaglink';a.href='#';a.innerHTML=`<span class="flag"></span> Change Region`;return a;}],
+
+  ["Right Rail Section Shell","Content","Disclosure Section",["Groups sections like 'Your Coupons' with chevron.","Body content below."],["Cart right rail"],()=>{const r=document.createElement('div');r.className='rail';r.innerHTML=`<div class="rail-head">Your Coupons ▾</div><div class="rail-body">Content goes here…</div>`;return r;}],
+
+  ["Empty State","Content","State",["Icon/headline/body guidance when a list has no items."],["Saved for later","Wishlists"],()=>{const e=document.createElement('div');e.className='surface';e.innerHTML=`<div style="font-weight:800;">No saved items</div><div style="color:#374151;">You have no saved items right now.</div><button class="btn btn-outline btn-small" style="margin-top:8px;">Browse products</button>`;return e;}]
+];
+function renderRows(filter='all',q=''){const tbody=document.getElementById('rows');tbody.innerHTML='';const norm=s=>(s||'').toLowerCase();items.filter(([name,cat,type])=>(filter==='all'||cat===filter)&&(q===''||norm(name).includes(q)||norm(type).includes(q))).forEach(([name,cat,type,guidelines,parents,demo])=>{const tr=document.createElement('tr');tr.className='row';const td1=document.createElement('td');td1.className='cell';td1.innerHTML=`<div><strong>${name}</strong></div><div class="code">${type}</div>`;const tdCat=document.createElement('td');tdCat.className='cell';tdCat.innerHTML=`<span class="badge">${cat}</span>`;const td2=document.createElement('td');td2.className='cell';td2.innerHTML=`<ul style="margin:0 0 0 18px;padding:0">${guidelines.map(g=>`<li>${g}</li>`).join('')}</ul>`;const td3=document.createElement('td');td3.className='cell';td3.innerHTML=`<ul style="margin:0 0 0 18px;padding:0">${parents.map(p=>`<li>${p}</li>`).join('')}</ul>`;const td4=document.createElement('td');td4.className='cell';const d=demo();d.classList.add('demo');td4.appendChild(d);tr.append(td1,tdCat,td2,td3,td4);tbody.appendChild(tr);});}
+renderRows();
+document.getElementById('filter').addEventListener('change',e=>renderRows(e.target.value,document.getElementById('search').value.trim().toLowerCase()));
+document.getElementById('search').addEventListener('input',e=>renderRows(document.getElementById('filter').value,e.target.value.trim().toLowerCase()));
+</script>
+</body>
+</html>
